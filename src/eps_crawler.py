@@ -97,5 +97,5 @@ if __name__ == '__main__':
             df_all.loc[row[KEY_CODE]][KEY_NAME] = row[KEY_NAME]
 
 #    print(df_all)
-    df_all.to_csv('EPS_from_{}_to_{}.csv'.format(season_query_strings[0], season_query_strings[-1]))
+    df_all.to_csv('{}-{}歷年EPS.csv'.format(season_query_strings[0], season_query_strings[-1]))
 #        exit()
