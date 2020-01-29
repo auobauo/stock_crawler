@@ -13,8 +13,9 @@ INDEX_CASH_DIVIDEND = 3
 INDEX_STOCK_DIVIDEND = 6
 INDEX_EPS = 20
 
-CODE_STR = 'Code'
-KEY_NAME = 'Name'
+CODE_STR = '代號'
+KEY_NAME = '股名'
+KEY_CURRENT_PRICE = '現價'
 
 KEY_CASH_DIVIDEND = '_現金股利'
 KEY_STOCK_DIVIDEND = '_股票股利'
@@ -25,6 +26,18 @@ def is_float(value):
         return True
     except ValueError:
         return False
+
+def get_current_price(soup):
+    tables = soup.find_all('table')
+    target_tab = tables[5]
+    tds = target_tab.findAll('td')
+    target_td = tds[51]
+    tables = target_td.find_all('table')
+    target_tab = tables[0]
+    trs = target_tab.findAll('tr')
+    target_tr = trs[4]
+
+    return target_tr.findAll('td')[0].getText()
 
 if __name__ == '__main__':
     config = configparser.ConfigParser()
@@ -55,7 +68,7 @@ if __name__ == '__main__':
     stocks = json.loads(config.get("Target","Number"))
     stock_str_list = [str(s) for s in stocks]
 
-    df_all = pd.DataFrame([], columns=[KEY_NAME] + df_column_list, index=stock_str_list)
+    df_all = pd.DataFrame([], columns=[KEY_NAME, KEY_CURRENT_PRICE] + df_column_list, index=stock_str_list)
 
     for stock in stock_str_list:
         url = 'https://goodinfo.tw/StockInfo/StockDividendPolicy.asp?STOCK_ID=' + stock
@@ -65,6 +78,9 @@ if __name__ == '__main__':
         result.encoding = 'utf8'
         soup = BeautifulSoup(result.text, 'html.parser')
         name = soup.title.getText().split()[1]
+        price = get_current_price(soup)
+        df_all.loc[stock][KEY_NAME] = name
+        df_all.loc[stock][KEY_CURRENT_PRICE] = price
         div = soup.find(id='divDetail')
         tables = div.find_all('table')
         target_tab = tables[0]
@@ -77,14 +93,13 @@ if __name__ == '__main__':
                     cash_dividend = tds[INDEX_CASH_DIVIDEND].getText()
                     stock_dividend = tds[INDEX_STOCK_DIVIDEND].getText()
                     eps = tds[INDEX_EPS].getText()
-                    df_all.loc[stock][KEY_NAME] = name
                     df_all.loc[stock][year+KEY_CASH_DIVIDEND] = cash_dividend
                     df_all.loc[stock][year+KEY_STOCK_DIVIDEND] = stock_dividend
 
-        print('--------------------df_all:')
-        print(df_all)
+#        print('--------------------df_all:')
+#        print(df_all)
 
         time.sleep(2)
         print("stock {} got".format(stock))
 
-    df_all.to_csv("{}-{}歷年股利.csv".format(start_year, end_year))
+    df_all.to_csv("{}-{}歷年配股配息(元-每股).csv".format(start_year, end_year))

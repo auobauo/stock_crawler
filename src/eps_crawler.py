@@ -7,8 +7,8 @@ import time
 import requests
 import zipfile
 
-KEY_CODE = 'Code'
-KEY_NAME = 'Name'
+KEY_CODE = '代號'
+KEY_NAME = '股名'
 KEY_EPS_THIS_SEASON = 'Eps_this_season'
 
 if __name__ == '__main__':
@@ -97,5 +97,5 @@ if __name__ == '__main__':
             df_all.loc[row[KEY_CODE]][KEY_NAME] = row[KEY_NAME]
 
 #    print(df_all)
-    df_all.to_csv('{}-{}歷年EPS.csv'.format(season_query_strings[0], season_query_strings[-1]))
+    df_all.to_csv('{}-{}歷年EPS(元-每股).csv'.format(season_query_strings[0], season_query_strings[-1]))
 #        exit()

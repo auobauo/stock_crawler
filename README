@@ -1,0 +1,46 @@
+# Readme
+
+- 設定檔
+  修改config.ini，把你想要爬的股票相關參數填入。
+  - 股票代碼
+    將想要抓的代號例如台積電(2330), 鴻海(2317), 跟大立光(3008)
+    填入config.ini的[Target]的Number填入 [2330, 2317, 3008]
+    內容如下：
+    
+    [Target]
+    Number: [2330, 2317, 3008]
+    
+    若要再增加一個標的，比如聯發科(2454)
+    就再多加一筆變成
+    
+    [Target]
+    Number: [2330, 2317, 3008, 2454]
+    
+    將之存檔
+  - 資訊區間
+    將想抓取的資料的區間填入[FinancialReport]裡的start_season跟
+    end_season。例如要從2015年第一季至2019年第二季，則config.ini
+    的內容如下：
+
+    [FinancialReport]
+    start_season = 2015/Q1
+    end_season = 2019/Q3
+
+- 如何執行
+  - 安裝python(應為python 3)。
+  - 安裝python相關套件
+    在此資料夾下，輸入
+    pip install -r requirements.txt
+
+  - 執行
+    - 進入src資料夾，輸入
+    python3 dividend_crawler.py
+    即可在同資料下得到"XXXX-XXXX歷年配股配息(元-每股).csv"
+
+    - 進入src資料夾，輸入
+    python3 eps_crawler.py
+    即可在同資料下得到"XXXX-XXXX歷年EPS(元-每股).csv"
+
+    - 進入src資料夾，輸入
+    python3 income_crawler.py
+    即可在同資料下得到"XXXX-XXXX歷史營收(億).csv"
